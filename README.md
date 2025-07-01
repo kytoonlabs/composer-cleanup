@@ -163,7 +163,7 @@ composer install
 
 ## License
 
-This package is open-sourced software licensed under the [MIT license](LICENSE).
+This package is open-sourced software licensed under the [Apache 2.0 license](LICENSE).
 
 ## Disclaimer
 
