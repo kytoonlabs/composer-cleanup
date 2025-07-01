@@ -5,8 +5,9 @@ namespace KytoonLabs\ComposerCleanup;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
-use Nikic\PHPParser\ParserFactory;
-use Nikic\PHPParser\Node;
+use PhpParser\ParserFactory;
+use PhpParser\Node;
+use PhpParser\PhpVersion;
 use Symfony\Component\Finder\Finder;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -59,7 +60,7 @@ class VendorCleaner
 
     private function scanLaravelApplication(): void
     {
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory)->createForVersion(new PhpVersion(80000));
         
         $finder = new Finder();
         $finder->files()
