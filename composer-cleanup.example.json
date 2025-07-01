@@ -1,0 +1,31 @@
+{
+  "scan_directories": [
+    "app",
+    "config",
+    "database",
+    "resources",
+    "routes",
+    "tests"
+  ],
+  "exclude_directories": [
+    "vendor",
+    "node_modules",
+    "storage",
+    "bootstrap/cache"
+  ],
+  "exclude_packages": [
+    "laravel/framework",
+    "laravel/tinker",
+    "laravel/sanctum",
+    "laravel/telescope",
+    "laravel/horizon",
+    "laravel/nova",
+    "laravel/fortify",
+    "laravel/jetstream",
+    "laravel/breeze",
+    "laravel/ui"
+  ],
+  "exclude_package_types": ["composer-plugin", "metapackage", "library"],
+  "dry_run": true,
+  "verbose": false
+}
