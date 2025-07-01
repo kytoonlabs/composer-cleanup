@@ -1,5 +1,6 @@
 {
   "name": "kytoonlabs/composer-cleanup",
+  "version": "dev-main",
   "description": "A Composer package to review Laravel applications and remove unused dependencies from vendor folder",
   "type": "composer-plugin",
   "license": "Apache-2.0",
@@ -36,6 +37,6 @@
     "test": "phpunit",
     "cleanup": "php bin/cleanup.php"
   },
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "prefer-stable": true
 }
