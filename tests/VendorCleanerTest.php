@@ -1,6 +1,6 @@
 <?php
 
-namespace Enrique\ComposerCleanup\Tests;
+namespace KytoonLabs\ComposerCleanup\Tests;
 
 use PHPUnit\Framework\TestCase;
 use KytoonLabs\ComposerCleanup\VendorCleaner;

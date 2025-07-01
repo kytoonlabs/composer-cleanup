@@ -17,7 +17,7 @@ A Composer plugin that analyzes Laravel applications and removes unused dependen
 1. Install the package:
 
 ```bash
-composer require enrique/composer-cleanup --dev
+composer require kytoonlabs/composer-cleanup --dev
 ```
 
 2. The plugin will automatically register and run during `composer dump-autoload`
