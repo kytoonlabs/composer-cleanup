@@ -21,7 +21,7 @@ class VendorCleaner
     private array $usedNamespaces = [];
     private string $projectRoot;
 
-    public function __construct(Composer $composer, IOInterface $io, Config $config = null)
+    public function __construct(Composer $composer, IOInterface $io, ?Config $config = null)
     {
         $this->composer = $composer;
         $this->io = $io;
@@ -34,28 +34,28 @@ class VendorCleaner
         $this->io->write('Analyzing Laravel application for used classes...');
         
         // Scan Laravel application files
-        $this->scanLaravelApplication();
+        // $this->scanLaravelApplication();
         
-        // Get installed packages
-        $installedPackages = $this->composer->getRepositoryManager()
-            ->getLocalRepository()
-            ->getPackages();
+        // // Get installed packages
+        // $installedPackages = $this->composer->getRepositoryManager()
+        //     ->getLocalRepository()
+        //     ->getPackages();
         
-        $unusedPackages = $this->findUnusedPackages($installedPackages);
+        // $unusedPackages = $this->findUnusedPackages($installedPackages);
         
-        if (empty($unusedPackages)) {
-            $this->io->write('No unused packages found.');
-            return;
-        }
+        // if (empty($unusedPackages)) {
+        //     $this->io->write('No unused packages found.');
+        //     return;
+        // }
         
-        $this->io->write(sprintf('Found %d potentially unused packages:', count($unusedPackages)));
+        // $this->io->write(sprintf('Found %d potentially unused packages:', count($unusedPackages)));
         
-        foreach ($unusedPackages as $package) {
-            $this->io->write(sprintf('  - %s', $package->getName()));
-        }
+        // foreach ($unusedPackages as $package) {
+        //     $this->io->write(sprintf('  - %s', $package->getName()));
+        // }
         
-        // Remove unused packages
-        $this->removeUnusedPackages($unusedPackages);
+        // // Remove unused packages
+        // $this->removeUnusedPackages($unusedPackages);
     }
 
     private function scanLaravelApplication(): void
