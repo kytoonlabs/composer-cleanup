@@ -55,7 +55,7 @@ class VendorCleaner
         }
         
         // // Remove unused packages
-        // $this->removeUnusedPackages($unusedPackages);
+        $this->removeUnusedPackages($unusedPackages);
     }
 
     private function scanLaravelApplication(): void
