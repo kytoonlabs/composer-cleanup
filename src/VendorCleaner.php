@@ -81,6 +81,7 @@ class VendorCleaner
         foreach ($finder as $file) {
             try {
                 $ast = $parser->parse($file->getContents());
+                $this->io->write(json_encode($ast, JSON_PRETTY_PRINT));
                 $this->extractUsedClasses($ast);
             } catch (\Exception $e) {
                 if ($this->config->isVerbose()) {
