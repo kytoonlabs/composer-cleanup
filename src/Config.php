@@ -10,7 +10,7 @@ class Config
     {
         $this->config = array_merge([
             'scan_directories' => [
-                'app',
+                'ProcessMaker',
                 'config',
                 'database',
                 'resources',
