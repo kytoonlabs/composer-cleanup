@@ -34,7 +34,7 @@ class VendorCleaner
         $this->io->write('Analyzing Laravel application for used classes...');
         
         // Scan Laravel application files
-        // $this->scanLaravelApplication();
+        $this->scanLaravelApplication();
         
         // // Get installed packages
         // $installedPackages = $this->composer->getRepositoryManager()
@@ -60,7 +60,7 @@ class VendorCleaner
 
     private function scanLaravelApplication(): void
     {
-        $parser = (new ParserFactory)->createForVersion(new PhpVersion(80000));
+        $parser = (new ParserFactory)->createForHostVersion();
         
         $finder = new Finder();
         $finder->files()
