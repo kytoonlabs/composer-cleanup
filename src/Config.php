@@ -35,7 +35,7 @@ class Config
                 'composer-plugin',
                 'metapackage',
             ],
-            'dry_run' => false,
+            'dry_run' => true,
             'verbose' => false,
         ], $config);
     }
