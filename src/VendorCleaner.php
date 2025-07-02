@@ -35,6 +35,9 @@ class VendorCleaner
         
         // Scan Laravel application files
         $this->scanLaravelApplication();
+
+        $this->listUsedClasses();
+        $this->listUsedNamespaces();
         
         // // Get installed packages
         $installedPackages = $this->composer->getRepositoryManager()
@@ -81,7 +84,6 @@ class VendorCleaner
         foreach ($finder as $file) {
             try {
                 $ast = $parser->parse($file->getContents());
-                $this->io->write(json_encode($ast, JSON_PRETTY_PRINT));
                 $this->extractUsedClasses($ast);
             } catch (\Exception $e) {
                 if ($this->config->isVerbose()) {
@@ -91,25 +93,126 @@ class VendorCleaner
         }
     }
 
+    private function listUsedClasses(): void
+    {
+        $this->io->write(json_encode($this->usedClasses, JSON_PRETTY_PRINT));
+    }
+
+    private function listUsedNamespaces(): void
+    {
+        $this->io->write(json_encode($this->usedNamespaces, JSON_PRETTY_PRINT));
+    }
+
     private function extractUsedClasses(array $ast): void
     {
         foreach ($ast as $node) {
-            if ($node instanceof Node\Stmt\Use_) {
-                foreach ($node->uses as $use) {
-                    $this->usedNamespaces[] = $use->name->toString();
+            $this->processNode($node);
+        }
+    }
+
+    private function processNode(Node $node): void
+    {
+        // Handle use statements
+        if ($node instanceof Node\Stmt\Use_) {
+            foreach ($node->uses as $use) {
+                $this->usedNamespaces[] = $use->name->toString();
+            }
+        }
+        // Handle group use statements
+        elseif ($node instanceof Node\Stmt\GroupUse) {
+            $prefix = $node->prefix->toString();
+            foreach ($node->uses as $use) {
+                $this->usedNamespaces[] = $prefix . '\\' . $use->name->toString();
+            }
+        }
+        // Handle class instantiation
+        elseif ($node instanceof Node\Expr\New_) {
+            if ($node->class instanceof Node\Name) {
+                $this->usedClasses[] = $node->class->toString();
+            }
+        }
+        // Handle static method calls
+        elseif ($node instanceof Node\Expr\StaticCall) {
+            if ($node->class instanceof Node\Name) {
+                $this->usedClasses[] = $node->class->toString();
+            }
+        }
+        // Handle class constant access
+        elseif ($node instanceof Node\Expr\ClassConstFetch) {
+            if ($node->class instanceof Node\Name) {
+                $this->usedClasses[] = $node->class->toString();
+            }
+        }
+        // Handle static property access
+        elseif ($node instanceof Node\Expr\StaticPropertyFetch) {
+            if ($node->class instanceof Node\Name) {
+                $this->usedClasses[] = $node->class->toString();
+            }
+        }
+        // Handle instanceof checks
+        elseif ($node instanceof Node\Expr\Instanceof_) {
+            if ($node->class instanceof Node\Name) {
+                $this->usedClasses[] = $node->class->toString();
+            }
+        }
+        // Handle catch blocks
+        elseif ($node instanceof Node\Stmt\Catch_) {
+            foreach ($node->types as $type) {
+                $this->usedClasses[] = $type->toString();
+            }
+        }
+        // Handle function calls (for global functions)
+        elseif ($node instanceof Node\Expr\FuncCall) {
+            if ($node->name instanceof Node\Name) {
+                $this->usedClasses[] = $node->name->toString();
+            }
+        }
+        // Handle type hints in function/method parameters
+        elseif ($node instanceof Node\Param) {
+            if ($node->type instanceof Node\Name) {
+                $this->usedClasses[] = $node->type->toString();
+            }
+        }
+        // Handle return type hints
+        elseif ($node instanceof Node\Stmt\Function_ || $node instanceof Node\Stmt\ClassMethod) {
+            if ($node->returnType instanceof Node\Name) {
+                $this->usedClasses[] = $node->returnType->toString();
+            }
+        }
+        // Handle property type hints
+        elseif ($node instanceof Node\Stmt\PropertyProperty) {
+            if (isset($node->type) && $node->type instanceof Node\Name) {
+                $this->usedClasses[] = $node->type->toString();
+            }
+        }
+        // Handle class extends
+        elseif ($node instanceof Node\Stmt\Class_) {
+            if ($node->extends instanceof Node\Name) {
+                $this->usedClasses[] = $node->extends->toString();
+            }
+            // Handle implements
+            foreach ($node->implements as $interface) {
+                $this->usedClasses[] = $interface->toString();
+            }
+        }
+        // Handle trait use
+        elseif ($node instanceof Node\Stmt\TraitUse) {
+            foreach ($node->traits as $trait) {
+                $this->usedClasses[] = $trait->toString();
+            }
+        }
+
+        // Recursively process child nodes
+        foreach ($node->getSubNodeNames() as $name) {
+            $subNode = $node->$name;
+            if (is_array($subNode)) {
+                foreach ($subNode as $childNode) {
+                    if ($childNode instanceof Node) {
+                        $this->processNode($childNode);
+                    }
                 }
-            } elseif ($node instanceof Node\Expr\New_) {
-                if ($node->class instanceof Node\Name) {
-                    $this->usedClasses[] = $node->class->toString();
-                }
-            } elseif ($node instanceof Node\Expr\StaticCall) {
-                if ($node->class instanceof Node\Name) {
-                    $this->usedClasses[] = $node->class->toString();
-                }
-            } elseif ($node instanceof Node\Expr\ClassConstFetch) {
-                if ($node->class instanceof Node\Name) {
-                    $this->usedClasses[] = $node->class->toString();
-                }
+            } elseif ($subNode instanceof Node) {
+                $this->processNode($subNode);
             }
         }
     }
@@ -144,10 +247,11 @@ class VendorCleaner
         }
         
         $autoload = $package->getAutoload();
+        //$this->io->write(json_encode($autoload, JSON_PRETTY_PRINT));
         
         foreach (['psr-0', 'psr-4', 'classmap'] as $type) {
             if (isset($autoload[$type])) {
-                if ($this->hasUsedClasses($autoload[$type], $type)) {
+                if ($this->hasUsedClasses($autoload[$type], $type, $package->getName())) {
                     return false;
                 }
             }
@@ -156,12 +260,13 @@ class VendorCleaner
         return true;
     }
 
-    private function hasUsedClasses(array $autoload, string $type): bool
+    private function hasUsedClasses(array $autoload, string $type, string $packageName): bool
     {
         foreach ($autoload as $namespace => $path) {
             if ($type === 'psr-4' || $type === 'psr-0') {
                 foreach ($this->usedNamespaces as $usedNamespace) {
                     if (strpos($usedNamespace, $namespace) === 0) {
+                        $this->io->write("usedNamespace: " . $usedNamespace . ", namespace: " . $namespace . ", packageName: " . $packageName);
                         return true;
                     }
                 }

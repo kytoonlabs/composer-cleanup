@@ -24,12 +24,12 @@ class Config
                 'bootstrap/cache',
             ],
             'exclude_packages' => [
-                'laravel/framework',
-                'laravel/tinker',
-                'laravel/sanctum',
-                'laravel/telescope',
-                'laravel/horizon',
-                'laravel/nova',
+                // 'laravel/framework',
+                // 'laravel/tinker',
+                // 'laravel/sanctum',
+                // 'laravel/telescope',
+                // 'laravel/horizon',
+                // 'laravel/nova',
             ],
             'exclude_package_types' => [
                 'composer-plugin',
