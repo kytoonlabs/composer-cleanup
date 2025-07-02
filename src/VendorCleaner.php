@@ -37,22 +37,22 @@ class VendorCleaner
         $this->scanLaravelApplication();
         
         // // Get installed packages
-        // $installedPackages = $this->composer->getRepositoryManager()
-        //     ->getLocalRepository()
-        //     ->getPackages();
+        $installedPackages = $this->composer->getRepositoryManager()
+            ->getLocalRepository()
+            ->getPackages();
         
-        // $unusedPackages = $this->findUnusedPackages($installedPackages);
+        $unusedPackages = $this->findUnusedPackages($installedPackages);
         
-        // if (empty($unusedPackages)) {
-        //     $this->io->write('No unused packages found.');
-        //     return;
-        // }
+        if (empty($unusedPackages)) {
+            $this->io->write('No unused packages found.');
+            return;
+        }
         
-        // $this->io->write(sprintf('Found %d potentially unused packages:', count($unusedPackages)));
+        $this->io->write(sprintf('Found %d potentially unused packages:', count($unusedPackages)));
         
-        // foreach ($unusedPackages as $package) {
-        //     $this->io->write(sprintf('  - %s', $package->getName()));
-        // }
+        foreach ($unusedPackages as $package) {
+            $this->io->write(sprintf('  - %s', $package->getName()));
+        }
         
         // // Remove unused packages
         // $this->removeUnusedPackages($unusedPackages);
