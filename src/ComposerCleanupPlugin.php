@@ -3,13 +3,10 @@
 namespace KytoonLabs\ComposerCleanup;
 
 use Composer\Composer;
-use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Script\Event;
-use Composer\Script\ScriptEvents;
 
-class ComposerCleanupPlugin implements PluginInterface, EventSubscriberInterface
+class ComposerCleanupPlugin implements PluginInterface
 {
     private Composer $composer;
     private IOInterface $io;
@@ -17,10 +14,34 @@ class ComposerCleanupPlugin implements PluginInterface, EventSubscriberInterface
 
     public function activate(Composer $composer, IOInterface $io): void
     {
-        $this->composer = $composer;
-        $this->io = $io;
-        $this->cleaner = new VendorCleaner($composer, $io);
+        // $this->composer = $composer;
+        // $this->io = $io;
+        
+        // // Check for composer-cleanup.json configuration file
+        // $config = $this->loadConfiguration();
+        // $this->cleaner = new VendorCleaner($composer, $io, $config);
     }
+
+    // private function loadConfiguration(): Config
+    // {
+    //     $projectRoot = dirname($this->composer->getConfig()->get('vendor-dir'));
+    //     $configFile = $projectRoot . '/composer-cleanup.json';
+        
+    //     if (file_exists($configFile)) {
+    //         $this->io->write('<info>Loading configuration from composer-cleanup.json</info>');
+    //         $configData = json_decode(file_get_contents($configFile), true);
+            
+    //         if (json_last_error() !== JSON_ERROR_NONE) {
+    //             $this->io->writeError('<error>Invalid JSON in composer-cleanup.json: ' . json_last_error_msg() . '</error>');
+    //             return new Config();
+    //         }
+            
+    //         return new Config($configData);
+    //     }
+        
+    //     $this->io->write('<comment>No composer-cleanup.json found, using default configuration</comment>');
+    //     return new Config();
+    // }
 
     public function deactivate(Composer $composer, IOInterface $io): void
     {
@@ -32,22 +53,5 @@ class ComposerCleanupPlugin implements PluginInterface, EventSubscriberInterface
         // Cleanup when plugin is uninstalled
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            ScriptEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
-        ];
-    }
 
-    public function onPreAutoloadDump(Event $event): void
-    {
-        $this->io->write('<info>Starting Laravel vendor cleanup...</info>');
-        
-        try {
-            $this->cleaner->cleanup();
-            $this->io->write('<info>Vendor cleanup completed successfully!</info>');
-        } catch (\Exception $e) {
-            $this->io->writeError('<error>Vendor cleanup failed: ' . $e->getMessage() . '</error>');
-        }
-    }
 } 

@@ -1,6 +1,6 @@
 # Composer Cleanup
 
-A Composer plugin that analyzes Laravel applications and removes unused dependencies from the vendor folder. This package is designed to run automatically as a pre-autoload-dump script to keep your vendor directory clean and reduce deployment size.
+A Composer plugin that analyzes Laravel applications and removes unused dependencies from the vendor folder. This package provides a manual command to keep your vendor directory clean and reduce deployment size.
 
 ## Features
 
@@ -12,15 +12,13 @@ A Composer plugin that analyzes Laravel applications and removes unused dependen
 
 ## Installation
 
-### As a Composer Plugin
-
 1. Install the package:
 
 ```bash
 composer require kytoonlabs/composer-cleanup --dev
 ```
 
-2. The plugin will automatically register and run during `composer dump-autoload`
+2. The plugin will be available for manual cleanup operations
 
 ### Manual Installation
 
@@ -45,21 +43,18 @@ php bin/cleanup.php
 
 ## Usage
 
-### Automatic Mode (Recommended)
-
-The plugin runs automatically when you execute:
-
-```bash
-composer dump-autoload
-```
-
-### Manual Mode
-
-You can also run the cleanup manually:
+Run the cleanup command:
 
 ```bash
 composer cleanup
 ```
+
+This will:
+
+1. Analyze your Laravel application for used classes and namespaces
+2. Identify unused vendor packages
+3. Remove the unused packages
+4. Regenerate autoload files
 
 ### Configuration
 
@@ -163,7 +158,7 @@ composer install
 
 ## License
 
-This package is open-sourced software licensed under the [Apache 2.0 license](LICENSE).
+This package is open-sourced software licensed under the [Apache 2.0](LICENSE) license.
 
 ## Disclaimer
 

@@ -9,27 +9,10 @@ class Config
     public function __construct(array $config = [])
     {
         $this->config = array_merge([
-            'scan_directories' => [
-                'ProcessMaker',
-                'config',
-                'database',
-                'resources',
-                'routes',
-                'tests',
-            ],
-            'exclude_directories' => [
-                'vendor',
-                'node_modules',
-                'storage',
-                'bootstrap/cache',
-            ],
+            'scan_directories' => [],
+            'exclude_directories' => [],
             'exclude_packages' => [
-                // 'laravel/framework',
-                // 'laravel/tinker',
-                // 'laravel/sanctum',
-                // 'laravel/telescope',
-                // 'laravel/horizon',
-                // 'laravel/nova',
+                'kytoonlabs/composer-cleanup',
             ],
             'exclude_package_types' => [
                 'composer-plugin',
@@ -78,5 +61,31 @@ class Config
     public function getExcludePackageTypes(): array
     {
         return $this->config['exclude_package_types'];
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    public static function loadConfiguration($dir): Config
+    {
+        $projectRoot = dirname($dir);
+        $configFile = $projectRoot . '/composer-cleanup.json';
+        
+        if (file_exists($configFile)) {
+            //$this->io->write('<info>Loading configuration from composer-cleanup.json</info>');
+            $configData = json_decode(file_get_contents($configFile), true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                //$this->io->writeError('<error>Invalid JSON in composer-cleanup.json: ' . json_last_error_msg() . '</error>');
+                return new Config();
+            }
+            
+            return new Config($configData);
+        }
+        
+        //$this->io->write('<comment>No composer-cleanup.json found, using default configuration</comment>');
+        return new Config();
     }
 } 
