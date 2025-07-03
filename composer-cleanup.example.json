@@ -5,14 +5,10 @@
     "database",
     "resources",
     "routes",
-    "tests"
+    "tests",
+    "vendor"
   ],
-  "exclude_directories": [
-    "vendor",
-    "node_modules",
-    "storage",
-    "bootstrap/cache"
-  ],
+  "exclude_directories": ["node_modules", "storage", "bootstrap/cache"],
   "exclude_packages": [
     "laravel/framework",
     "laravel/tinker",
@@ -25,7 +21,7 @@
     "laravel/breeze",
     "laravel/ui"
   ],
-  "exclude_package_types": ["composer-plugin", "metapackage", "library"],
+  "exclude_package_types": ["composer-plugin", "metapackage"],
   "dry_run": true,
   "verbose": false
 }

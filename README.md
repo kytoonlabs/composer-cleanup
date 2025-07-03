@@ -1,4 +1,4 @@
-git s# Composer Cleanup
+# Composer Cleanup
 
 A Composer plugin that analyzes Laravel applications and removes unused dependencies from the vendor folder. This package provides a manual command to keep your vendor directory clean and reduce deployment size.
 
