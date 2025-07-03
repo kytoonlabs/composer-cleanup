@@ -2,7 +2,7 @@
   "name": "kytoonlabs/composer-cleanup",
   "version": "1.0.6",
   "description": "A Composer package to review Laravel applications and remove unused dependencies from vendor folder",
-  "type": "composer-plugin",
+  "type": "library",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -12,9 +12,8 @@
   ],
   "require": {
     "php": ">=8.2",
-    "composer-plugin-api": "^2.0",
     "nikic/php-parser": "^5.0",
-    "symfony/finder": "^5.0|^6.0|^7.0"
+    "symfony/finder": "^7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0|^10.0",
@@ -22,20 +21,17 @@
   },
   "autoload": {
     "psr-4": {
-      "KytoonLabs\\ComposerCleanup\\": "src/"
+      "KytoonLabs\\Composer\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "KytoonLabs\\ComposerCleanup\\Tests\\": "tests/"
+      "KytoonLabs\\Composer\\Tests\\": "tests/"
     }
-  },
-  "extra": {
-    "class": "KytoonLabs\\ComposerCleanup\\ComposerCleanupPlugin"
   },
   "scripts": {
     "test": "phpunit",
-    "cleanup": "php bin/cleanup.php"
+    "cleanup": "KytoonLabs\\Composer\\Cleaner::cleanup"
   },
   "minimum-stability": "stable",
   "prefer-stable": true

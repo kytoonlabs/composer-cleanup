@@ -1,6 +1,6 @@
 <?php
 
-namespace KytoonLabs\ComposerCleanup;
+namespace KytoonLabs\Composer;
 
 class Config
 {
@@ -68,24 +68,33 @@ class Config
         return $this->config;
     }
 
-    public static function loadConfiguration($dir): Config
+    public static function loadConfiguration($composer, $io): Config
     {
-        $projectRoot = dirname($dir);
+        $projectRoot = dirname($composer->getConfig()->get('vendor-dir'));
         $configFile = $projectRoot . '/composer-cleanup.json';
         
         if (file_exists($configFile)) {
-            //$this->io->write('<info>Loading configuration from composer-cleanup.json</info>');
+            $io->write('<info>Loading configuration from composer-cleanup.json</info>');
             $configData = json_decode(file_get_contents($configFile), true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
-                //$this->io->writeError('<error>Invalid JSON in composer-cleanup.json: ' . json_last_error_msg() . '</error>');
+                $io->writeError('<error>Invalid JSON in composer-cleanup.json: ' . json_last_error_msg() . '</error>');
+                exit(1);
                 return new Config();
             }
             
             return new Config($configData);
         }
         
-        //$this->io->write('<comment>No composer-cleanup.json found, using default configuration</comment>');
+        $io->write('<comment>No composer-cleanup.json found, using default configuration</comment>');
         return new Config();
+    }
+
+    public static function hasConfigFile($composer): bool
+    {
+        $projectRoot = dirname($composer->getConfig()->get('vendor-dir'));
+        $configFile = $projectRoot . '/composer-cleanup.json';
+        
+        return file_exists($configFile);
     }
 } 
