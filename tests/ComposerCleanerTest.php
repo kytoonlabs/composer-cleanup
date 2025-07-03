@@ -13,7 +13,6 @@ use Composer\Repository\InstalledRepositoryInterface;
 
 class ComposerCleanerTest extends TestCase
 {
-    private Cleaner $cleaner;
     private Config $config;
     private Composer $composer;
     private NullIO $io;
@@ -25,12 +24,6 @@ class ComposerCleanerTest extends TestCase
         
         // Create a proper Composer mock with all required dependencies
         $this->composer = $this->createComposerMock();
-        
-        $this->cleaner = new Cleaner(
-            $this->composer,
-            $this->io,
-            $this->config
-        );
     }
 
     private function createComposerMock(): Composer
@@ -108,14 +101,18 @@ class ComposerCleanerTest extends TestCase
         $this->assertEquals('custom_value', $config->get('custom_key'));
     }
 
-    public function testVendorCleanerInitialization(): void
+    public function testCleanerClassExists(): void
     {
-        $this->assertInstanceOf(Cleaner::class, $this->cleaner);
+        $this->assertTrue(class_exists(Cleaner::class));
+        $this->assertTrue(method_exists(Cleaner::class, 'cleanup'));
     }
 
-    public function testVendorCleanerWithNullConfig(): void
+    public function testCleanerStaticMethod(): void
     {
-        $cleaner = new Cleaner($this->composer, $this->io);
-        $this->assertInstanceOf(Cleaner::class, $cleaner);
+        // Test that the cleanup method is static and accessible
+        $reflection = new \ReflectionClass(Cleaner::class);
+        $method = $reflection->getMethod('cleanup');
+        $this->assertTrue($method->isStatic());
+        $this->assertTrue($method->isPublic());
     }
 } 

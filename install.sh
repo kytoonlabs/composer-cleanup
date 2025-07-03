@@ -12,9 +12,6 @@ fi
 echo "Installing dependencies..."
 composer install
 
-# Make cleanup script executable
-chmod +x bin/cleanup.php
-
 # Copy example configuration
 if [ ! -f composer-cleanup.json ]; then
     echo "Creating configuration file..."
@@ -29,7 +26,7 @@ echo ""
 echo "Installation completed!"
 echo ""
 echo "Usage:"
-echo "  - Run cleanup: php bin/cleanup.php"
+echo "  - Run cleanup: composer cleanup"
 echo "  - Run tests: composer test"
 echo "  - Configure: Edit composer-cleanup.json"
 echo ""
